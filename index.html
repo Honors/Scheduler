@@ -1,0 +1,61 @@
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
+<style>
+  body {
+    font-family: 'Helvetica Neue', 'Garamond';
+  }
+  #wrapper {
+    position: absolute;
+    width: 500px;
+    left: 50%;
+    margin-left: -250px;
+    padding-bottom: 100px;
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+  .label {
+    display: block;
+    margin-bottom: 5px;    
+  }
+  input {
+    border: 1px solid black;
+    padding: 3px;
+  }  
+  .radiolbl {
+    padding-right: 5px;
+    padding-left: 5px;
+  }
+  .annotation {
+    margin-left: -20px;
+    display: block;
+    float: left;
+  }
+  @media print {
+    form { display: none; }
+    h1 { text-align: center; }
+  }
+</style>
+<div id="wrapper">
+  <h1>Class Schedule</h1>
+  <form action="/submit" method="POST" id="form">
+    <span class="label">With what period should we start (0 = HR)?</span><input type="text" name="period" placeholder="Period Start" value="0"><input type="text" name="start" placeholder="Start Time" value="7:50">
+    <span class="label">With what period should we end?</span><input type="text" name="period_end" placeholder="Period End" value="8"><input type="text" name="end" placeholder="End Time" value="15:13">
+    <span class="label">How long is lunch?</span><input type="text" name="lunch" value="77">
+    <br><input type="submit">
+  </form>
+  <ul id="resp"></ul>
+</div>  
+<script>
+  $("#form").submit(function(evt) {
+    evt.preventDefault();
+    var start = $("input[name=period]").val(),
+        end = $("input[name=period_end]").val(),
+	from = $("input[name=start]").val(),
+	to = $("input[name=end]").val(),
+	lunch = $("input[name=lunch]").val();
+    $("#resp").load(["/api", start, end, from, to, lunch].join("/"))
+  });
+</script>
