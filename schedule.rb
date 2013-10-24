@@ -1,6 +1,8 @@
 require 'rubygems'
 require 'sinatra'
 
+set :port, 3070
+
 class Block
   attr_accessor :length, :flexible
   def initialize(length, flexible)
