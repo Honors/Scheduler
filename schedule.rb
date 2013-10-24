@@ -27,7 +27,7 @@ def periods(lunch)
   l = Block.new lunch, false
   b = Block.new 5, false
   a = Block.new 2, false  
-  [Block.new(7, false), b, n.clone, b, n.clone, b, n.clone, b, n.clone, a, b, l, b, n.clone, b, n.clone, a, b, n.clone]
+  [Block.new(7, false), b, n.clone, b, n.clone, b, n.clone, b, n.clone, a, l, b, n.clone, b, n.clone, a, b, n.clone]
 end
 def fit_upto(blocks, start, finish)
   min_range = (finish - start)/60
@@ -44,20 +44,21 @@ end
 def render_periods(ps, start)
   start = start.to_i
   max_length = ps.map(&:length).reduce(0) {|m,x| x>m ? x : m}
+  time_format = "%H:%M:%S"
   stamps = ps.map(&:length).reduce([[0,0]]) {|a,x|
     a.concat([[a.last[0] + a.last[1], x]])
   }.select {|x|
     x[1] != 5
   }[1..-1].map {|x| 
     if x.last == max_length
-      sub = ((max_length/3).round) * 60
+      sub = max_length/3 * 60
       lstart = x.first*60 + start
       ends = [[lstart, sub], [lstart+sub, sub], [lstart+sub*2, sub]]      
-      ["A " + Time.at(ends[0].first).strftime("%H:%M:%S") + " - " + Time.at(ends[0].first+ends[0].last).strftime("%H:%M:%S"),
-       "B " + Time.at(ends[1].first).strftime("%H:%M:%S") + " - " + Time.at(ends[1].first+ends[1].last).strftime("%H:%M:%S"),
-       "C " + Time.at(ends[2].first).strftime("%H:%M:%S") + " - " + Time.at(ends[2].first+ends[2].last).strftime("%H:%M:%S")].join('<br>')
+      ["A " + Time.at(ends[0].first).strftime(time_format) + " - " + Time.at(ends[0].first+ends[0].last).strftime(time_format),
+       "B " + Time.at(ends[1].first).strftime(time_format) + " - " + Time.at(ends[1].first+ends[1].last).strftime(time_format),
+       "C " + Time.at(ends[2].first).strftime(time_format) + " - " + Time.at(ends[2].first+ends[2].last).strftime(time_format)].join('<br>')
     else
-      Time.at(x.first*60 + start).strftime("%H:%M:%S") + " - " + Time.at((x.first + x.last)*60 + start).strftime("%H:%M:%S")
+      Time.at(x.first*60 + start).strftime(time_format) + " - " + Time.at((x.first + x.last)*60 + start).strftime(time_format)
     end
   }.join "<br>"
 end
