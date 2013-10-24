@@ -43,12 +43,22 @@ def fit_periods(a, b, lunch, finish, start=Time.now)
 end
 def render_periods(ps, start)
   start = start.to_i
+  max_length = ps.map(&:length).reduce(0) {|m,x| x>m ? x : m}
   stamps = ps.map(&:length).reduce([[0,0]]) {|a,x|
     a.concat([[a.last[0] + a.last[1], x]])
   }.select {|x|
     x[1] != 5
   }[1..-1].map {|x| 
-    Time.at(x.first*60 + start).strftime("%H:%M:%S") + " - " + Time.at((x.first + x.last)*60 + start).strftime("%H:%M:%S")
+    if x.last == max_length
+      sub = ((max_length/3).round) * 60
+      lstart = x.first*60 + start
+      ends = [[lstart, sub], [lstart+sub, sub], [lstart+sub*2, sub]]      
+      ["A " + Time.at(ends[0].first).strftime("%H:%M:%S") + " - " + Time.at(ends[0].first+ends[0].last).strftime("%H:%M:%S"),
+       "B " + Time.at(ends[1].first).strftime("%H:%M:%S") + " - " + Time.at(ends[1].first+ends[1].last).strftime("%H:%M:%S"),
+       "C " + Time.at(ends[2].first).strftime("%H:%M:%S") + " - " + Time.at(ends[2].first+ends[2].last).strftime("%H:%M:%S")].join('<br>')
+    else
+      Time.at(x.first*60 + start).strftime("%H:%M:%S") + " - " + Time.at((x.first + x.last)*60 + start).strftime("%H:%M:%S")
+    end
   }.join "<br>"
 end
 
